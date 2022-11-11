@@ -1,3 +1,5 @@
+{-# LANGUAGE NoMonomorphismRestriction #-}
+
 import XMonad
 import XMonad.Util.EZConfig
 import XMonad.Util.Ungrab
@@ -65,9 +67,6 @@ c_PhysicalScreenCmds = ["M-w", "M-e", "M-r"]
 insertShift :: String -> String
 insertShift x = DL.take 2 x ++ "S-" ++ DL.drop 2 x
 
-
-
-
 windowTilingLayout = avoidStruts $ spacingRaw True (Border 5 5 5 5) True (Border 5 5 5 5) True $ (blocked ||| renamed [Replace "\63378"] (Full))
   where
           blocked = renamed [Replace "\63424"] $ ResizableThreeCol 1 (3/100) (1/2) []
@@ -116,9 +115,10 @@ keybindings = \c -> mkKeymap c $
         , ("M-,", sendMessage (IncMasterN 1))
         , ("M-.", sendMessage (IncMasterN (-1)))
         , ("M-S-q", io (exitWith ExitSuccess))
-        , ("M-q", spawn "xmonad --recompile; xmonad --restart")
+        , ("M-q", spawn "xmonad --recompile && xmonad --restart")
+        , ("M-b", sendMessage ToggleStruts)
         , ("M-S-/", spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
-        , ("M-S-.", goToSelected def)
+        , ("M-S-.", goToSelected customGridSelectConfig)
         ]
         ++
         -- switching to workspace numbered in c_Workspaces based on command given there
@@ -130,7 +130,7 @@ keybindings = \c -> mkKeymap c $
            | (ws, cmd) <- c_Workspaces]
         ++
         -- switching to physical screen 0, 1, 2
-        [ (cmd, screenWorkspace wspcNo >>= flip whenJust (windows . W.view))
+        [(cmd, screenWorkspace wspcNo >>= flip whenJust (windows . W.view))
            |(cmd, wspcNo) <- zip c_PhysicalScreenCmds [0..]]
         ++ 
         -- moving thing to physical screen 0, 1, 2
@@ -169,8 +169,6 @@ fromXres = unsafePerformIO . getFromXres
 
 xmobarBG = (fromXres "*.background")
 xmobarFG = (fromXres "*.foreground")
-
-
 
 myStartupHook :: X ()
 myStartupHook = do
@@ -222,11 +220,26 @@ customXMobarPP = def {
           hiddenWindowColor = xmobarColor (fromXres "*.color8") ""
           invisible = xmobarColor xmobarBG xmobarBG
 
+customGridSelectConfig :: GSConfig Window
+customGridSelectConfig = (buildDefaultGSConfig colorizer) { 
+               gs_cellheight = 100
+             , gs_cellwidth = 300
+             , gs_font = "xft:Fira Code Regular Nerd Font Complete"
+                             }
+
+colorizer :: Window -> Bool -> X(String, String)
+colorizer = colorRangeFromClassName
+                     black            -- lowest inactive bg
+                     (0xFF,0x70,0xFF) -- highest inactive bg
+                     (88, 3, 138)            -- active bg
+                     (77,77,77) -- inactive fg
+                     white            -- active fg
+  where black = minBound
+        white = maxBound
+
 main :: IO ()
 main = xmonad
-     . withSB (statusBarProp ("xmobar -x 0 ~/.config/xmobar/xmobarrc " ++ 
-                        "-B \"" ++ xmobarBG ++ "\" " ++
-                        "-F \"" ++ xmobarFG ++ "\" ")
+     . withSB (statusBarProp ("xmobar")
                         (pure customXMobarPP))
      . ewmhFullscreen
      . ewmh

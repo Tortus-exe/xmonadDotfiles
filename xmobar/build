@@ -1,0 +1,3 @@
+#!/bin/sh
+
+cabal install -fwith_xft --overwrite-policy=always -fall_extensions && xmonad --restart
