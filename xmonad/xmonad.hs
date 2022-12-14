@@ -19,6 +19,7 @@ import XMonad.ManageHook
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.FadeInactive
 import XMonad.Layout.Spacing
+import XMonad.Hooks.SetWMName
 
 import System.Exit
 
@@ -46,7 +47,7 @@ c_clickJustFocuses = False
 c_windowBorder = 0 --px
 c_windowBorderColor = fromXres "*.color0"
 c_focusBorderColor = fromXres "*.color8"
-c_wallpaper = "~/Pictures/Moebius4.jpeg"
+c_wallpaper = "~/Pictures/GITSsc2.jpeg"
 
 c_superKey = mod4Mask
 --               name,keycombo to goto
@@ -85,8 +86,8 @@ newWindowHook = composeAll
 keybindings :: XConfig Layout -> Map (ButtonMask, KeySym) (X ())
 keybindings = \c -> mkKeymap c $ 
         [ ("M-S-<Return>", spawn $ XMonad.terminal c)
-        , ("M-<F5>", spawn "xbacklight +5")
-        , ("M-<F4>", spawn "xbacklight -5")
+        , ("M-<F5>", unGrab *> spawn "xbacklight +5")
+        , ("M-<F4>", unGrab *> spawn "xbacklight -5")
         , ("<XF86AudioRaiseVolume>", spawn "pulsemixer --change-volume +5")
         , ("<XF86AudioLowerVolume>", spawn "pulsemixer --change-volume -5")
         , ("<XF86AudioMute>", spawn "pulsemixer --toggle-mute")
@@ -139,7 +140,7 @@ keybindings = \c -> mkKeymap c $
 
 -- mouse :: !(XConfig Layout -> Map (ButtonMask, KeySym) (X ()))
 windowSetChangeHook :: X ()
-windowSetChangeHook = fadeInactiveLogHook 1
+windowSetChangeHook = fadeInactiveLogHook 1 >> setWMName "LG3D"
 
 -- function to get something from .Xresources file
 getFromXres :: String -> IO String
@@ -172,10 +173,10 @@ xmobarFG = (fromXres "*.foreground")
 
 myStartupHook :: X ()
 myStartupHook = do
-        --spawnOnce "nitrogen --restore &"
         spawnOnce ("feh --bg-fill "++ c_wallpaper++" &")
         spawnOnce "picom --shadow-opacity 0 --corner-radius 5 &"
         spawnOnce "xrandr --output eDP-1 --mode 1920x1200 --preferred &"
+        setWMName "LG3D"
 
 --https://hackage.haskell.org/package/xmonad-0.17.0/docs/XMonad-Core.html#t:XConfig
 configuration = def {
@@ -239,7 +240,7 @@ colorizer = colorRangeFromClassName
 
 main :: IO ()
 main = xmonad
-     . withSB (statusBarProp ("xmobar")
+     . withSB (statusBarProp "xmobar"
                         (pure customXMobarPP))
      . ewmhFullscreen
      . ewmh

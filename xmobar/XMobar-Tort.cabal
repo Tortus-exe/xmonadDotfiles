@@ -30,6 +30,8 @@ executable XMobar-Tort
                     , xmobar ^>=0.45
                     , xmonad-contrib ^>=0.17.1
                     , X11-xft
+                    , pango
+                    , cairo
     hs-source-dirs:   src-exe
     default-language: Haskell2010
     ghc-options: -threaded -rtsopts
