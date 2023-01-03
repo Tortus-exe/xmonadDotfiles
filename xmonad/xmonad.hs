@@ -47,19 +47,19 @@ c_clickJustFocuses = False
 c_windowBorder = 0 --px
 c_windowBorderColor = fromXres "*.color0"
 c_focusBorderColor = fromXres "*.color8"
-c_wallpaper = "~/Pictures/GITSsc2.jpeg"
+c_wallpaper = "~/Pictures/GITSsc1.jpeg"
 
 c_superKey = mod4Mask
 --               name,keycombo to goto
-c_Workspaces = [ ("1","M-1"),
-                 ("2","M-2"),
-                 ("3","M-3"),
-                 ("4","M-4"),
-                 ("5","M-5"),
-                 ("6","M-6"),
-                 ("7","M-7"),
-                 ("8","M-8"),
-                 ("9","M-9")]
+c_Workspaces = [ ("壹","M-1"),
+                 ("貳","M-2"),
+                 ("叁","M-3"),
+                 ("肆","M-4"),
+                 ("伍","M-5"),
+                 ("陸","M-6"),
+                 ("柒","M-7"),
+                 ("捌","M-8"),
+                 ("玖","M-9")]
 -- screen no.            0      1      2
 c_PhysicalScreenCmds = ["M-w", "M-e", "M-r"]
 
@@ -117,13 +117,14 @@ keybindings = \c -> mkKeymap c $
         , ("M-.", sendMessage (IncMasterN (-1)))
         , ("M-S-q", io (exitWith ExitSuccess))
         , ("M-q", spawn "xmonad --recompile && xmonad --restart")
-        , ("M-b", sendMessage ToggleStruts)
+        -- , ("M-b", sendMessage ToggleStruts)
+        , ("M-b", unGrab *> spawn "polybar-msg cmd toggle")
         , ("M-S-/", spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
         , ("M-S-.", goToSelected customGridSelectConfig)
         ]
         ++
         -- switching to workspace numbered in c_Workspaces based on command given there
-        [(cmd, windows $ W.greedyView ws)
+        [(cmd, (windows $ W.greedyView ws))
            | (ws, cmd) <- c_Workspaces]
         ++
         -- moving something to that workspace instead of viewing it
@@ -174,8 +175,10 @@ xmobarFG = (fromXres "*.foreground")
 myStartupHook :: X ()
 myStartupHook = do
         spawnOnce ("feh --bg-fill "++ c_wallpaper++" &")
-        spawnOnce "picom --shadow-opacity 0 --corner-radius 5 &"
+        spawnOnce "picom --shadow-opacity 0 --corner-radius 5 -b --animations --animation-window-mass 0.5 --animation-for-open-window zoom --animation-stiffness 350 &"
         spawnOnce "xrandr --output eDP-1 --mode 1920x1200 --preferred &"
+        spawnOnce "ibus-daemon -drxR &"
+        spawnOnce "polybar -r bar &"
         setWMName "LG3D"
 
 --https://hackage.haskell.org/package/xmonad-0.17.0/docs/XMonad-Core.html#t:XConfig
@@ -240,8 +243,8 @@ colorizer = colorRangeFromClassName
 
 main :: IO ()
 main = xmonad
-     . withSB (statusBarProp "xmobar"
-                        (pure customXMobarPP))
+--     . withSB (statusBarProp "polybar"
+--                        (pure customXMobarPP))
      . ewmhFullscreen
      . ewmh
      . docks
