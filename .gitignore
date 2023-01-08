@@ -1,0 +1,47 @@
+BetterDiscord Installer/
+BetterDiscord/
+Electron/
+Element/
+Fightcade/
+GIMP/
+QtProject.conf
+SlippiOnline/
+Trolltech.conf
+Unknown Organization/
+abiword/
+aliases
+bsnes-hd beta/
+calcurse/
+cef_user_data/
+cpupower_gui/
+dconf/
+discord/
+fontconfig/
+gtk-2.0/
+ibus/
+kglobalshortcutsrc
+kitty/
+kritadisplayrc
+kritarc
+melonDS/
+mimeapps.list
+mozc/
+mupen64plus/
+neofetch/
+nestopia/
+nvim/
+obsidian/
+pacseek/
+pipe-viewer/
+pipewire/
+polybar/
+pulse/
+ranger/
+rncbc.org/
+starship.toml
+systemd/
+typingtest/
+unity3d/
+vis/
+zoom.conf
+zoomus.conf
